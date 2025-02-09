@@ -42,6 +42,8 @@ public class SignInActivity extends AppCompatActivity {
             return insets;
         });
 
+
+
         emailEditText = findViewById(R.id.email);
         passEditText = findViewById(R.id.pass);
         submit = findViewById(R.id.submit);
@@ -116,4 +118,6 @@ public class SignInActivity extends AppCompatActivity {
         });
 
     }
+
+
 }

@@ -7,7 +7,7 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/textViewEventName"
+        android:id="@+id/eventDetailTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Event Name"
@@ -23,14 +23,14 @@
         android:padding="15dp"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textViewParticipants"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Participants"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            android:textStyle="bold"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/participantsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@android:color/darker_gray"
+            android:dividerHeight="1dp"/>
+
+
 
     </LinearLayout>
 </LinearLayout>

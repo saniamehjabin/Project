@@ -98,10 +98,7 @@ public class SignUpActivity extends AppCompatActivity {
                     confirmPassEditText.setError("Passwords do not match");
                     confirmPassEditText.requestFocus();
                 }
-//                else if (!passPattern.matcher(pass).matches()){
-//                    passEditText.setError("At least one uppercase, lowercase, digit, special character, and password length between 8-20");
-//                    passEditText.requestFocus();
-//                }
+
 
                 else {
                     progressBar.setVisibility(View.VISIBLE);

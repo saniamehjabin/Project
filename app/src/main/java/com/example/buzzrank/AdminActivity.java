@@ -2,13 +2,19 @@ package com.example.buzzrank;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class AdminActivity extends AppCompatActivity {
 
     private Button btnEvents, btnNewEvents;
+    private TextView textView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +23,7 @@ public class AdminActivity extends AppCompatActivity {
 
         btnEvents = findViewById(R.id.btnEvents);
         btnNewEvents = findViewById(R.id.btnNewEvents);
+        textView = findViewById(R.id.textView);
 
         // Navigate to EventListActivity when "Events" button is clicked
         btnEvents.setOnClickListener(v -> {
@@ -30,5 +37,20 @@ public class AdminActivity extends AppCompatActivity {
             Intent intent = new Intent(AdminActivity.this, CreateEventActivity.class);
             startActivity(intent);
         });
+
+        // Set click listener to handle logout
+        textView.setOnClickListener(v -> {
+            // Log out from Firebase
+            FirebaseAuth.getInstance().signOut();
+
+            // Navigate to the login screen
+            Intent intent = new Intent(AdminActivity.this, SignInActivity.class);
+            startActivity(intent);
+            finish(); // Close AdminActivity to prevent back navigation
+        });
     }
+
+
+
+
 }

@@ -63,29 +63,7 @@ public class EventListActivity extends AppCompatActivity {
                 });
     }
 
-/*    private void onEventClick(Event event) {
-        // Log eventId to verify it's being passed correctly
-        Log.d("EventListActivity", "Passing eventId: " + event.getId());
 
-        // Retrieve the username and isAdmin flag passed from SignInActivity
-        String username = getIntent().getStringExtra("username");
-        boolean isAdmin = getIntent().getBooleanExtra("isAdmin", false);
-
-        if (isAdmin) {
-            // Admin user - navigate to EventDetailActivity
-            Intent intent = new Intent(EventListActivity.this, EventDetailActivity.class);
-            intent.putExtra("eventId", event.getId()); // Pass event ID or other relevant data
-            startActivity(intent);
-        } else {
-            // Regular user - navigate to MainActivity
-            Intent intent = new Intent(EventListActivity.this, MainActivity.class);
-            intent.putExtra("username", username); // Pass username or other necessary data
-            intent.putExtra("eventId", event.getId()); // Pass event ID to MainActivity
-            intent.putExtra("eventName", event.getName()); // Optionally pass event details
-
-            startActivity(intent);
-        }
-    }*/
 
 
     private void onEventClick(Event event) {
@@ -100,6 +78,7 @@ public class EventListActivity extends AppCompatActivity {
             // Admin user - navigate to EventDetailActivity
             Intent intent = new Intent(EventListActivity.this, EventDetailActivity.class);
             intent.putExtra("eventId", event.getId()); // Pass event ID
+            intent.putExtra("eventName", event.getEventName()); // Optionally pass event details
 
             startActivity(intent);
         } else {
