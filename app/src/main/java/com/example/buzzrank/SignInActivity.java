@@ -44,6 +44,7 @@ public class SignInActivity extends AppCompatActivity {
 
 
 
+
         emailEditText = findViewById(R.id.email);
         passEditText = findViewById(R.id.pass);
         submit = findViewById(R.id.submit);
@@ -64,7 +65,7 @@ public class SignInActivity extends AppCompatActivity {
                 passEditText.requestFocus();
             }
             // Check if it's admin login
-            else if (email.equals("admin@example.com") && pass.equals("123456")) {
+            else if (email.equals("mony_cse@lus.ac.bd") && pass.equals("123456")) {
                 // Admin login
                 Toast.makeText(getApplicationContext(), "Admin login successful!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), AdminActivity.class);

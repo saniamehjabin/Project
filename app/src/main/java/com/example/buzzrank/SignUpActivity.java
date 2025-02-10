@@ -35,9 +35,9 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText nameEditText, emailEditText, passEditText, confirmPassEditText;
     private String name, email, pass, confirm_pass;
     private Button submit;
-    private Pattern namePattern = Pattern.compile("[a-z A-Z._]+");
-    private Pattern emailPattern = Pattern.compile("^(cse_)\\d{10}(@lus.ac.bd)$");
-    private Pattern passPattern = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$");
+    private Pattern namePattern = Pattern.compile("[A-Z]+[a-z]+_[0-9]{4}");
+    private Pattern emailPattern = Pattern.compile("([a-z]+_cse)|(cse_\\d{15}|[a-z]+_\\d*)@(gmail|yahoo|lus.ac.bd)");
+    private Pattern passPattern = Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&#]{8,}$");
     private TextView login;
 
     private FirebaseAuth auth;
@@ -77,18 +77,22 @@ public class SignUpActivity extends AppCompatActivity {
                     nameEditText.setError("Empty!!");
                     nameEditText.requestFocus();
                 } else if (!namePattern.matcher(name).matches()){
-                    nameEditText.setError("Name can be only Alphabet");
+                    nameEditText.setError("Name should be in 'Name_(last 4 digits of your ID)' format");
                     nameEditText.requestFocus();
                 } else if (email.isEmpty()){
                     emailEditText.setError("Empty!!");
                     emailEditText.requestFocus();
                 }
-//                else if (!emailPattern.matcher(email).matches()){
-//                    emailEditText.setError("Only LU student email is allowed");
-//                    emailEditText.requestFocus();
-//                }
+                 else if (!emailPattern.matcher(email).matches()){
+                   emailEditText.setError("Invalid email format");
+                   emailEditText.requestFocus();
+                }
                 else if (pass.isEmpty()){
                     passEditText.setError("Empty!!");
+                    passEditText.requestFocus();
+                }
+                else if (!passPattern.matcher(pass).matches()){
+                    passEditText.setError("At least one uppercase, lowercase, digit, special character, and password length between 8-20");
                     passEditText.requestFocus();
                 }
                 else if (confirm_pass.isEmpty()) {

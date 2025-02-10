@@ -7,9 +7,13 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -40,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
         firestore = FirebaseFirestore.getInstance();
         buzzerButton = findViewById(R.id.buzzer_button); // Button reference
         TextView textView = findViewById(R.id.textView);
+        TextView timeStampTextView = findViewById(R.id.time_stamp);
+
+        // Set time_stamp visibility to GONE initially
+        timeStampTextView.setVisibility(View.GONE);
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String username = getIntent().getStringExtra("username");
@@ -91,6 +100,17 @@ public class MainActivity extends AppCompatActivity {
 
             // Release MediaPlayer resources when done
             mediaPlayer.setOnCompletionListener(MediaPlayer::release);
+
+            // Get the current time when the buzzer is pressed
+            long timestamp = System.currentTimeMillis();
+
+            // Format the timestamp into a readable format (e.g., hh:mm:ss)
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+            String formattedTime = sdf.format(new Date(timestamp));
+            timeStampTextView.setVisibility(View.VISIBLE);  // Make the TextView visible
+
+            // Update the time_stamp TextView with the formatted timestamp
+            timeStampTextView.setText("Time: " + formattedTime);  // Display formatted time
 
             // Log buzzer press to Firestore
             if (eventId != null) {
