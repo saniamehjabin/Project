@@ -3,12 +3,15 @@ package com.example.buzzrank;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -42,7 +45,39 @@ public class EventListActivity extends AppCompatActivity {
         recyclerViewEvents.setAdapter(eventsAdapter);
 
         fetchEvents();
+
+        // Set up the logout functionality when TextView is clicked
+        TextView logoutTextView = findViewById(R.id.textView);
+        if (isAdmin) {
+            // Hide logout and refresh for admins
+            logoutTextView.setVisibility(View.GONE);
+            TextView refreshTextView = findViewById(R.id.refresh);
+            refreshTextView.setVisibility(View.GONE);
+        } else
+        logoutTextView.setOnClickListener(v -> {
+            // Log out the user
+            FirebaseAuth.getInstance().signOut();
+
+            // Show a toast message
+            Toast.makeText(EventListActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+
+            // Redirect to SignInActivity
+            Intent intent = new Intent(EventListActivity.this, SignInActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Clear the back stack so user can't go back to EventListActivity
+            startActivity(intent);
+            finish(); // Close the current activity
+        });
+
+        // Set up the refresh functionality when TextView is clicked
+        TextView refreshTextView = findViewById(R.id.refresh);
+        refreshTextView.setOnClickListener(v -> {
+            // Refresh the activity by fetching the events again
+            fetchEvents();
+        });
+
     }
+
+
 
     private void fetchEvents() {
         db.collection("events")
@@ -75,7 +110,9 @@ public class EventListActivity extends AppCompatActivity {
         boolean isAdmin = getIntent().getBooleanExtra("isAdmin", false);
 
         if (isAdmin) {
+
             // Admin user - navigate to EventDetailActivity
+
             Intent intent = new Intent(EventListActivity.this, EventDetailActivity.class);
             intent.putExtra("eventId", event.getId()); // Pass event ID
             intent.putExtra("eventName", event.getEventName()); // Optionally pass event details

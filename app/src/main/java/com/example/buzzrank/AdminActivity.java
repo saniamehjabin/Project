@@ -1,6 +1,7 @@
 package com.example.buzzrank;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,16 +39,20 @@ public class AdminActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Set click listener to handle logout
         textView.setOnClickListener(v -> {
             // Log out from Firebase
             FirebaseAuth.getInstance().signOut();
+
+            // Clear admin login state from SharedPreferences
+            SharedPreferences sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
+            sharedPreferences.edit().putBoolean("isAdminLoggedIn", false).apply();
 
             // Navigate to the login screen
             Intent intent = new Intent(AdminActivity.this, SignInActivity.class);
             startActivity(intent);
             finish(); // Close AdminActivity to prevent back navigation
         });
+
     }
 
 

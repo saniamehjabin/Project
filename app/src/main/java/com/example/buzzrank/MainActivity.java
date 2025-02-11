@@ -116,7 +116,12 @@ public class MainActivity extends AppCompatActivity {
             if (eventId != null) {
                 logBuzzerPressToFirebase(username, eventId, buzzerButton);
             }
+            textView.setVisibility(View.GONE);
+
         });
+
+
+
     }
 
 
@@ -187,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("Buzzer", "User has already pressed the buzzer for event: " + eventId);
                             buzzerButton.setEnabled(false);  // Disable button
                             buzzerButton.setText("Already Pressed");  // Update text
+
                         } else {
                             // User has not pressed the buzzer yet
                             Log.d("Buzzer", "User has not pressed the buzzer for event: " + eventId);

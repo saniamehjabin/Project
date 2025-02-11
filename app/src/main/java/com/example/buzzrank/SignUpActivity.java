@@ -36,7 +36,9 @@ public class SignUpActivity extends AppCompatActivity {
     private String name, email, pass, confirm_pass;
     private Button submit;
     private Pattern namePattern = Pattern.compile("[A-Z]+[a-z]+_[0-9]{4}");
-    private Pattern emailPattern = Pattern.compile("([a-z]+_cse)|(cse_\\d{15}|[a-z]+_\\d*)@(gmail|yahoo|lus.ac.bd)");
+    private Pattern emailPattern = Pattern.compile("^[a-z0-9.]+@(gmail\\.com|yahoo\\.com|lus\\.ac\\.bd)$");
+
+
     private Pattern passPattern = Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&#]{8,}$");
     private TextView login;
 

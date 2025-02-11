@@ -3,6 +3,7 @@ package com.example.buzzrank;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -30,6 +31,7 @@ public class SignInActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,9 @@ public class SignInActivity extends AppCompatActivity {
 
 
 
+        // Initialize SharedPreferences to check for admin login state
+        sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
+
 
         emailEditText = findViewById(R.id.email);
         passEditText = findViewById(R.id.pass);
@@ -52,6 +57,51 @@ public class SignInActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
+
+        // Check if the admin is already logged in from SharedPreferences
+        if (sharedPreferences.getBoolean("isAdminLoggedIn", false)) {
+            // If the admin is logged in, directly navigate to AdminActivity
+            Intent intent = new Intent(getApplicationContext(), AdminActivity.class);
+            intent.putExtra("isAdmin", true);
+            startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            finish();
+            return; // Prevent further execution in onCreate
+        }
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            if (!currentUser.isEmailVerified()) {
+                Toast.makeText(getApplicationContext(), "Please verify your email before signing in.", Toast.LENGTH_SHORT).show();
+                FirebaseAuth.getInstance().signOut();  // Sign out unverified users
+            } else {
+                // User is verified, allow automatic login
+                if (currentUser.getEmail().equals("mony_cse@lus.ac.bd")) {
+                    // Admin login
+                    Intent intent = new Intent(getApplicationContext(), AdminActivity.class);
+                    intent.putExtra("isAdmin", true);
+                    startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    finish();
+                } else {
+                    // Regular participant login
+                    firestore.collection("Users").document(currentUser.getUid())
+                            .get()
+                            .addOnSuccessListener(documentSnapshot -> {
+                                if (documentSnapshot.exists()) {
+                                    String username = documentSnapshot.getString("name");
+
+                                    Intent intent = new Intent(getApplicationContext(), EventListActivity.class);
+                                    intent.putExtra("isAdmin", false);
+                                    intent.putExtra("username", username);
+                                    startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                                    finish();
+                                }
+                            })
+                            .addOnFailureListener(e -> Toast.makeText(getApplicationContext(), "Error fetching user data.", Toast.LENGTH_SHORT).show());
+                }
+            }
+        }
+
+
 
         submit.setOnClickListener(v -> {
             email = emailEditText.getText().toString();
@@ -68,6 +118,8 @@ public class SignInActivity extends AppCompatActivity {
             else if (email.equals("mony_cse@lus.ac.bd") && pass.equals("123456")) {
                 // Admin login
                 Toast.makeText(getApplicationContext(), "Admin login successful!", Toast.LENGTH_SHORT).show();
+                // Store admin login state in SharedPreferences
+                sharedPreferences.edit().putBoolean("isAdminLoggedIn", true).apply();
                 Intent intent = new Intent(getApplicationContext(), AdminActivity.class);
                 intent.putExtra("isAdmin", true);
                 startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
@@ -20,10 +21,10 @@ public class EventDetailActivity extends AppCompatActivity {
     private RecyclerView participantsRecyclerView;
     private FirebaseFirestore db;
     private String eventId;
-    // private ArrayList<String> participantsList;
     private ArrayList<Participant> participantsList; // Store Participant objects
     private ParticipantsAdapter participantsAdapter;
     private TextView EventName;
+    private ListenerRegistration participantsListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,13 +66,17 @@ public class EventDetailActivity extends AppCompatActivity {
             return;
         }
 
-        db.collection("Buzzers")
+        participantsListener = db.collection("Buzzers")
                 .whereEqualTo("eventId", eventId)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+                .addSnapshotListener((queryDocumentSnapshots, e) -> {
+                    if (e != null) {
+                        Log.w("EventDetail", "Listen failed.", e);
+                        return;
+                    }
+
+                    if (queryDocumentSnapshots != null) {
                         participantsList.clear();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                             String participantName = document.getString("name");
                             Long timestamp = document.getLong("timestamp"); // Retrieve timestamp
 
@@ -84,19 +89,24 @@ public class EventDetailActivity extends AppCompatActivity {
                             }
                         }
 
-                        // Sort by timestamp
+                        // Sort participants by timestamp
                         participantsList.sort(Comparator.comparingLong(Participant::getTimestamp));
 
+                        // Notify the adapter about data changes
                         participantsAdapter.notifyDataSetChanged();
-                    } else {
-                        Exception e = task.getException();
-                        if (e != null) {
-                            Toast.makeText(EventDetailActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(EventDetailActivity.this, "Error fetching participants", Toast.LENGTH_SHORT).show();
-                        }
+
                     }
                 });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // Stop listening to real-time updates when the activity is destroyed
+        if (participantsListener != null) {
+            participantsListener.remove();
+        }
     }
 }
 
